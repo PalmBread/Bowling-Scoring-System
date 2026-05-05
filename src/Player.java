@@ -29,8 +29,8 @@ public class Player {
         System.out.print("|");
         for (Frame frame : frames) frame.displayRoll();
         System.out.print("     |\n          |");
-        for (int i = 0; i < 10; i++) frames.get(i).displayScore(frames, i);
         int totalScore = 0;
-        System.out.printf("%5s|\n", totalScore == 0 ? "" : totalScore);
+        for (int i = 0; i < 10; i++) totalScore += frames.get(i).displayScore(frames, i);
+        System.out.printf("%5s|\n", totalScore);
     }
 }

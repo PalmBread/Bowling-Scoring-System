@@ -54,10 +54,11 @@ public class Frame {
         System.out.print("|");
     }
 
-    public void displayScore(ArrayList<Frame> frames, int index) {
+    public int displayScore(ArrayList<Frame> frames, int index) {
         int score = this.getScore(frames, index);
         System.out.printf(tenth ? "%5s" : "%3s", score == -1 ? "" : score);
         System.out.print("|");
+        return score == -1 ? 0 : score;
     }
 
     private String encode(int n) {
