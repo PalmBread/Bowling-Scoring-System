@@ -7,9 +7,7 @@ public class App {
     public static void clear() {
         System.out.print("\033[H\033[2J");
         
-        for (int i = 0; i < 10; i++) {
-            System.out.println();
-        }
+        for (int i = 0; i < 10; i++) System.out.printf("%50s\n", "");
         
         System.out.flush();
     }

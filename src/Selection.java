@@ -7,6 +7,8 @@ public class Selection {
 
     public static void start() {
         while (!isDone) {
+            pause();
+
             App.clear();
             displayMenu();
             
@@ -20,8 +22,6 @@ public class Selection {
                 case "4": tryStartGame(); break;
                 default: invalidCommand(); break;
             }
-
-            pause();
         }
     }
 
