@@ -1,36 +1,54 @@
 import java.util.ArrayList;
 
 public class Player {
+    private static final int TOTAL_FRAMES = 10;
+    private static final int NORMAL_FRAMES = 9;
+    
     private String name;
-    private int active_frame = 0;
-    private ArrayList<Frame> frames = new ArrayList<>();
+    private int activeFrameIndex;
+    private ArrayList<Frame> frames;
 
-    Player(String name) {
+    public Player(String name) {
         this.name = name;
-        for (int i = 0; i < 9; i++) frames.add(new Frame());
+        this.activeFrameIndex = 0;
+        this.frames = new ArrayList<>();
+        
+        for (int i = 0; i < NORMAL_FRAMES; i++) frames.add(new Frame());
         frames.add(new Frame(true));
     }
 
-    public boolean isDone() { return active_frame == 10; }
+    public String getName() { return this.name; }
+    public boolean isDone() { return activeFrameIndex == TOTAL_FRAMES; }
 
     public boolean roll(int pins) {
-        if (this.active_frame >= 10) return false;
-        Frame frame = frames.get(active_frame);
-        frame.roll(pins);
-        Boolean done = frame.getType() != Frame.Type.ONGOING;
-        if (done) this.active_frame++;
-        return done;
+        if (this.activeFrameIndex >= TOTAL_FRAMES) return false;
+        
+        Frame currentFrame = frames.get(activeFrameIndex);
+        currentFrame.roll(pins);
+        
+        boolean isFrameComplete = (currentFrame.getType() != Frame.Type.ONGOING);
+        
+        if (isFrameComplete) this.activeFrameIndex++;
+        
+        return isFrameComplete;
     }
 
-    public String getName() { return this.name; }
-
     public void display() {
-        System.out.printf("%-10s", this.name);
-        System.out.print("|");
+        //Display Name
+        System.out.printf("%-10s|", this.name);
+        
+        //Display Rolls
         for (Frame frame : frames) frame.displayRoll();
-        System.out.print("     |\n          |");
+        System.out.print("     |\n");
+
+        //Display Scores
+        System.out.print("          |");
+        
         int totalScore = 0;
-        for (int i = 0; i < 10; i++) totalScore += frames.get(i).displayScore(frames, i);
+        for (int i = 0; i < TOTAL_FRAMES; i++) {
+            totalScore += frames.get(i).displayScore(frames, i);
+        }
+        
         System.out.printf("%5s|\n", totalScore);
     }
 }

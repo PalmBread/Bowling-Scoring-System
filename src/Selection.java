@@ -1,26 +1,23 @@
 import java.util.Scanner;
 
 public class Selection {
-    private static Scanner scan = new Scanner(System.in);
+    private static final int MAX_NAME_LENGTH = 10;
+    private static Scanner scanner = new Scanner(System.in);
+    private static boolean isDone = false;
 
     public static void start() {
-        while (true) {
+        while (!isDone) {
             App.clear();
-
-            System.out.println("1. Add new Player");
-            System.out.println("2. Kick Player");
-            System.out.println("3. View Player list");
-            System.out.println("4. Start Game");
-
-            System.out.print("\nEnter a number: ");
-            String input = scan.nextLine().strip();
+            displayMenu();
+            
+            String choice = scanner.nextLine().strip();
             System.out.println("\n");
-
-            switch (input) {
+            
+            switch (choice) {
                 case "1": addPlayer(); break;
                 case "2": kickPlayer(); break;
-                case "3": viewPlayers(); break;
-                case "4": return;
+                case "3": displayPlayers(); break;
+                case "4": tryStartGame(); break;
                 default: invalidCommand(); break;
             }
 
@@ -28,44 +25,81 @@ public class Selection {
         }
     }
 
+    private static void displayMenu() {
+        System.out.println("1. Add new Player");
+        System.out.println("2. Kick Player");
+        System.out.println("3. View Player list");
+        System.out.println("4. Start Game");
+        System.out.print("\nEnter a number: ");
+    }
+
     public static void addPlayer() {
         System.out.println("Creating new Player");
         System.out.print("\nEnter player name: ");
-        String name = scan.nextLine().toUpperCase();
+        String name = scanner.nextLine().toUpperCase();
 
-        if (name.length() > 10) {
-            System.out.println("Player name can't be more than 10 characters.");
-        } else if (Game.players.stream().anyMatch(player -> player.getName().equals(name))) {
-            System.out.println("Player '"+ name +"' already exists.");
+        if (name.length() > MAX_NAME_LENGTH) {
+            System.out.println("Player name can't be more than " + MAX_NAME_LENGTH + " characters.");
+        } else if (playerExists(name)) {
+            System.out.println("Player '" + name + "' already exists.");
         } else {
             Game.players.add(new Player(name));
             System.out.println("\nSuccessfully created player '" + name + "'.");
         }
     }
-    
+
     public static void kickPlayer() {
         System.out.println("Kicking of Player");
         System.out.print("\nEnter player name: ");
-        String name = scan.nextLine().toUpperCase();
+        String name = scanner.nextLine().toUpperCase();
 
-        for (Player player : Game.players) {
-            if (player.getName().equals(name)) {
-                Game.players.remove(player);
-                System.out.println("Successfully deleted player '" + name + "'");
-                return;
-            }
-        }
+        Player playerToRemove = getPlayer(name);
         
-        System.out.println("Player '" + name + "' not found.");
+        if (playerToRemove != null) {
+            Game.players.remove(playerToRemove);
+            System.out.println("Successfully deleted player '" + name + "'");
+        } else {
+            System.out.println("Player '" + name + "' not found.");
+        }
     }
 
-    public static void viewPlayers() {
+    public static void displayPlayers() {
         if (Game.players.size() == 0) {
             System.out.println("There are currently no players.");
         } else {
             System.out.println("Player List:");
-            for (Player player : Game.players) System.out.println("- " + player.getName());
+            for (Player player : Game.players) {
+                System.out.println("- " + player.getName());
+            }
         }
+    }
+
+    public static void tryStartGame() {
+        if (Game.players.size() > 0) {
+            isDone = true;
+        } else {
+            System.out.println("There are currently no players.");
+        }
+    }
+
+    private static boolean playerExists(String name) {
+        for (Player player : Game.players) {
+            if (player.getName().equals(name)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static Player getPlayer(String name) {
+        for (Player player : Game.players) {
+            if (player.getName().equals(name)) {
+                return player;
+            }
+        }
+
+        return null;
     }
 
     public static void invalidCommand() {
@@ -74,6 +108,6 @@ public class Selection {
 
     public static void pause() {
         System.out.print("\nPress Enter to continue...");
-        scan.nextLine();
+        scanner.nextLine();
     }
 }
